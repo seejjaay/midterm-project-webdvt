@@ -27,6 +27,14 @@ export default function CalendarView() {
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   }, [transactions, filterType]);
 
+  const selectedDayTransactions = useMemo(
+    () =>
+      transactions.filter((transaction) =>
+        isSameDay(parseISO(transaction.date), date),
+      ),
+    [transactions, date],
+  );
+
   const tileContent = ({ date, view }) => {
     if (view === "month") {
       const dayTransactions = transactions.filter((t) =>
@@ -92,44 +100,87 @@ export default function CalendarView() {
             onChange={setDate}
             value={date}
             tileContent={tileContent}
-            className="w-full border-0 !font-sans"
+            className="w-full border-0 font-sans!"
           />
         </div>
 
-        <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-slate-800">
-          <h2 className="text-lg font-bold mb-4">Upcoming Due</h2>
-          <div className="text-sm text-slate-500 mb-4">
-            {upcomingPayments.length} Scheduled
+        <div className="space-y-6">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-slate-800">
+            <h2 className="text-lg font-bold mb-4">Upcoming Due</h2>
+            <div className="text-sm text-slate-500 mb-4">
+              {upcomingPayments.length} Scheduled
+            </div>
+
+            <div className="space-y-4">
+              {upcomingPayments.map((payment) => (
+                <div
+                  key={payment.id}
+                  onClick={() => navigate(`/transaction/${payment.id}`)}
+                  className="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                >
+                  <div>
+                    <div className="font-semibold text-slate-800 dark:text-slate-200">
+                      {payment.name}
+                    </div>
+                    <div className="text-xs text-slate-500">
+                      Due: {payment.date}
+                    </div>
+                  </div>
+                  <div
+                    className={`font-bold ${payment.type === "Income" ? "text-emerald-500" : "text-rose-500"}`}
+                  >
+                    {payment.type === "Income" ? "+" : "-"}₱
+                    {payment.amount.toLocaleString()}
+                  </div>
+                </div>
+              ))}
+              {upcomingPayments.length === 0 && (
+                <div className="text-center text-slate-500 py-8">
+                  No upcoming payments found.
+                </div>
+              )}
+            </div>
           </div>
 
-          <div className="space-y-4">
-            {upcomingPayments.map((payment) => (
-              <div
-                key={payment.id}
-                onClick={() => navigate(`/transaction/${payment.id}`)}
-                className="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-              >
-                <div>
-                  <div className="font-semibold text-slate-800 dark:text-slate-200">
-                    {payment.name}
-                  </div>
-                  <div className="text-xs text-slate-500">
-                    Due: {payment.date}
-                  </div>
-                </div>
+          <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-slate-800">
+            <h2 className="text-lg font-bold mb-1">Selected Day</h2>
+            <div className="text-sm text-slate-500 mb-4">
+              {date.toLocaleDateString(undefined, {
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+              })}
+            </div>
+
+            <div className="space-y-4">
+              {selectedDayTransactions.map((transaction) => (
                 <div
-                  className={`font-bold ${payment.type === "Income" ? "text-emerald-500" : "text-rose-500"}`}
+                  key={transaction.id}
+                  onClick={() => navigate(`/transaction/${transaction.id}`)}
+                  className="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                 >
-                  {payment.type === "Income" ? "+" : "-"}₱
-                  {payment.amount.toLocaleString()}
+                  <div className="min-w-0 mr-3">
+                    <div className="font-semibold text-slate-800 dark:text-slate-200 truncate">
+                      {transaction.name}
+                    </div>
+                    <div className="text-xs text-slate-500">
+                      {transaction.type}
+                    </div>
+                  </div>
+                  <div
+                    className={`font-bold whitespace-nowrap ${transaction.type === "Income" ? "text-emerald-500" : "text-rose-500"}`}
+                  >
+                    {transaction.type === "Income" ? "+" : "-"}₱
+                    {transaction.amount.toLocaleString()}
+                  </div>
                 </div>
-              </div>
-            ))}
-            {upcomingPayments.length === 0 && (
-              <div className="text-center text-slate-500 py-8">
-                No upcoming payments found.
-              </div>
-            )}
+              ))}
+              {selectedDayTransactions.length === 0 && (
+                <div className="text-center text-slate-500 py-8">
+                  No transactions on this day.
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
