@@ -1,16 +1,36 @@
-# React + Vite
+# Walletter
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Walletter is a personal finance management app for tracking income, expenses, balances, and upcoming payments in one place. Its dashboard gives users a quick view of their financial activity, while dedicated records, calendar, and summary views make it easier to review spending patterns and plan ahead.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Monitor total balance, income, expenses, and recent transactions
+- Add and view detailed income or expense transactions
+- Browse transactions in a searchable records view
+- Review upcoming payments on a calendar
+- Visualize expenses by category and income versus expenses over time
+- Use the app in light or dark theme
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React
+- Vite
+- React Router
+- Tailwind CSS
+- Recharts
+- date-fns
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Install dependencies and start the development server:
+
+```bash
+npm install
+npm run dev
+```
+
+To create a production build:
+
+```bash
+npm run build
+```
