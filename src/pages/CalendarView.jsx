@@ -111,7 +111,7 @@ export default function CalendarView() {
               {upcomingPayments.length} Scheduled
             </div>
 
-            <div className="space-y-4">
+            <div className="max-h-64 overflow-y-auto pr-1 space-y-4">
               {upcomingPayments.map((payment) => (
                 <div
                   key={payment.id}
@@ -152,7 +152,7 @@ export default function CalendarView() {
               })}
             </div>
 
-            <div className="space-y-4">
+            <div className="max-h-64 overflow-y-auto pr-1 space-y-4">
               {selectedDayTransactions.map((transaction) => (
                 <div
                   key={transaction.id}
