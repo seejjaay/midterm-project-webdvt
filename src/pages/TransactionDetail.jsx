@@ -1,37 +1,36 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router';
-import { useTransactions } from '../hooks/useTransactions';
+import { useState } from "react";
+import { useParams, useNavigate } from "react-router";
+import { useTransactions } from "../hooks/useTransactions";
 
 export default function TransactionDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { transactions, updateTransaction, deleteTransaction } = useTransactions();
-  
-  const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState(null);
+  const { transactions, updateTransaction, deleteTransaction } =
+    useTransactions();
+  const transaction = transactions.find((t) => t.id === id);
 
-  useEffect(() => {
-    const txn = transactions.find(t => t.id === id);
-    if (txn) {
-      setFormData(txn);
-    }
-  }, [id, transactions]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState(transaction);
 
   if (!formData) {
-    return <div className="text-center text-slate-500 py-12">Transaction not found</div>;
+    return (
+      <div className="text-center text-slate-500 py-12">
+        Transaction not found
+      </div>
+    );
   }
 
   const handleDelete = () => {
     if (window.confirm("Are you sure you want to delete this transaction?")) {
       deleteTransaction(id);
-      navigate('/records');
+      navigate("/records");
     }
   };
 
   const handleSave = () => {
     updateTransaction(id, {
       ...formData,
-      amount: Number(formData.amount)
+      amount: Number(formData.amount),
     });
     setIsEditing(false);
   };
@@ -40,26 +39,32 @@ export default function TransactionDetail() {
     <div className="max-w-2xl mx-auto">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Transaction Details</h1>
-        <button onClick={() => navigate(-1)} className="text-slate-500 hover:text-slate-800 dark:hover:text-slate-200">
+        <button
+          onClick={() => navigate(-1)}
+          className="text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
+        >
           &larr; Back
         </button>
       </div>
 
       <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-slate-800 space-y-6">
-        
         <div className="flex justify-between items-start border-b border-slate-100 dark:border-slate-800 pb-6">
           <div>
             {isEditing ? (
               <input
                 type="text"
                 value={formData.name}
-                onChange={(e) => setFormData({...formData, name: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
                 className="text-xl font-bold bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
             ) : (
               <h2 className="text-xl font-bold">{formData.name}</h2>
             )}
-            <div className="text-sm text-slate-500 mt-1">{new Date(formData.createdAt).toLocaleString()}</div>
+            <div className="text-sm text-slate-500 mt-1">
+              {new Date(formData.createdAt).toLocaleString()}
+            </div>
           </div>
           <div className="text-right">
             {isEditing ? (
@@ -67,12 +72,19 @@ export default function TransactionDetail() {
                 type="number"
                 step="0.01"
                 value={formData.amount}
-                onChange={(e) => setFormData({...formData, amount: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, amount: e.target.value })
+                }
                 className="text-xl font-bold bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 w-32 text-right focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
             ) : (
-              <div className={`text-2xl font-bold ${formData.type === 'Income' ? 'text-emerald-500' : 'text-rose-500'}`}>
-                {formData.type === 'Income' ? '+' : '-'}₱{Number(formData.amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+              <div
+                className={`text-2xl font-bold ${formData.type === "Income" ? "text-emerald-500" : "text-rose-500"}`}
+              >
+                {formData.type === "Income" ? "+" : "-"}₱
+                {Number(formData.amount).toLocaleString(undefined, {
+                  minimumFractionDigits: 2,
+                })}
               </div>
             )}
           </div>
@@ -80,11 +92,15 @@ export default function TransactionDetail() {
 
         <div className="grid grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-slate-500 mb-1">Type</label>
+            <label className="block text-sm font-medium text-slate-500 mb-1">
+              Type
+            </label>
             {isEditing ? (
               <select
                 value={formData.type}
-                onChange={(e) => setFormData({...formData, type: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, type: e.target.value })
+                }
                 className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-emerald-500"
               >
                 <option value="Income">Income</option>
@@ -95,12 +111,16 @@ export default function TransactionDetail() {
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-500 mb-1">Category</label>
+            <label className="block text-sm font-medium text-slate-500 mb-1">
+              Category
+            </label>
             {isEditing ? (
               <input
                 type="text"
                 value={formData.category}
-                onChange={(e) => setFormData({...formData, category: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, category: e.target.value })
+                }
                 className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
             ) : (
@@ -108,12 +128,16 @@ export default function TransactionDetail() {
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-500 mb-1">Mode</label>
+            <label className="block text-sm font-medium text-slate-500 mb-1">
+              Mode
+            </label>
             {isEditing ? (
               <input
                 type="text"
                 value={formData.mode}
-                onChange={(e) => setFormData({...formData, mode: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, mode: e.target.value })
+                }
                 className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
             ) : (
@@ -121,12 +145,16 @@ export default function TransactionDetail() {
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-500 mb-1">Date</label>
+            <label className="block text-sm font-medium text-slate-500 mb-1">
+              Date
+            </label>
             {isEditing ? (
               <input
                 type="date"
                 value={formData.date}
-                onChange={(e) => setFormData({...formData, date: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, date: e.target.value })
+                }
                 className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
             ) : (
@@ -136,16 +164,22 @@ export default function TransactionDetail() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-500 mb-1">Description</label>
+          <label className="block text-sm font-medium text-slate-500 mb-1">
+            Description
+          </label>
           {isEditing ? (
             <textarea
               rows={3}
               value={formData.description}
-              onChange={(e) => setFormData({...formData, description: e.target.value})}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
               className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
           ) : (
-            <div className="font-medium whitespace-pre-wrap">{formData.description || 'No description provided.'}</div>
+            <div className="font-medium whitespace-pre-wrap">
+              {formData.description || "No description provided."}
+            </div>
           )}
         </div>
 
@@ -156,7 +190,7 @@ export default function TransactionDetail() {
           >
             Delete Transaction
           </button>
-          
+
           <div className="flex gap-4">
             {isEditing ? (
               <>
@@ -183,7 +217,6 @@ export default function TransactionDetail() {
             )}
           </div>
         </div>
-
       </div>
     </div>
   );

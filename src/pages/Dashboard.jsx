@@ -36,6 +36,7 @@ export default function Dashboard() {
   const { transactions } = useTransactions();
   const navigate = useNavigate();
   const [period, setPeriod] = useState("1m");
+  const [upcomingType, setUpcomingType] = useState("Expense");
 
   const today = startOfDay(new Date());
 
@@ -57,6 +58,11 @@ export default function Dashboard() {
     );
     return { pastTransactions: past, upcomingPayments: upcoming };
   }, [transactions, today]);
+
+  const filteredUpcomingPayments = useMemo(
+    () => upcomingPayments.filter((txn) => txn.type === upcomingType),
+    [upcomingPayments, upcomingType],
+  );
 
   // Calculate Balance
   const { totalIncome, totalExpense, balance } = useMemo(() => {
@@ -236,7 +242,7 @@ export default function Dashboard() {
       {/* Upcoming Payments */}
       <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-slate-800 lg:col-span-1 flex flex-col">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-bold">Upcoming Payments</h2>
+          <h2 className="text-lg font-bold">Upcoming {upcomingType}s</h2>
           <Link
             to="/calendar"
             className="text-emerald-500 text-sm font-medium hover:underline"
@@ -244,9 +250,20 @@ export default function Dashboard() {
             View All
           </Link>
         </div>
+        <div className="flex bg-slate-100 dark:bg-slate-800 rounded-lg p-1 mb-4">
+          {["Expense", "Income"].map((type) => (
+            <button
+              key={type}
+              onClick={() => setUpcomingType(type)}
+              className={`flex-1 px-3 py-1 rounded-md text-sm font-medium transition-colors ${upcomingType === type ? "bg-white dark:bg-slate-700 shadow-sm text-slate-900 dark:text-white" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"}`}
+            >
+              Upcoming {type}
+            </button>
+          ))}
+        </div>
         <div className="flex-1 overflow-y-auto space-y-4">
-          {upcomingPayments.length > 0 ? (
-            upcomingPayments.slice(0, 4).map((payment) => (
+          {filteredUpcomingPayments.length > 0 ? (
+            filteredUpcomingPayments.slice(0, 4).map((payment) => (
               <div
                 key={payment.id}
                 className="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl"
@@ -259,14 +276,17 @@ export default function Dashboard() {
                     Due: {payment.date}
                   </div>
                 </div>
-                <div className="font-bold text-rose-500">
-                  -₱{payment.amount.toLocaleString()}
+                <div
+                  className={`font-bold ${payment.type === "Income" ? "text-emerald-500" : "text-rose-500"}`}
+                >
+                  {payment.type === "Income" ? "+" : "-"}₱
+                  {payment.amount.toLocaleString()}
                 </div>
               </div>
             ))
           ) : (
             <div className="text-slate-500 text-center py-4">
-              No upcoming payments
+              No upcoming {upcomingType.toLowerCase()}s
             </div>
           )}
         </div>

@@ -147,6 +147,7 @@ export default function AddTransaction() {
             <input
               type="number"
               step="0.01"
+              onWheel={(e) => e.currentTarget.blur()}
               value={formData.amount}
               onChange={(e) =>
                 setFormData({ ...formData, amount: e.target.value })
